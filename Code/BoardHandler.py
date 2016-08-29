@@ -25,6 +25,9 @@ class BoardHandler():
     def exit(self):
         if self.board_booted == True:            
             self.board.exit()
+            
+    def devices(self):
+        return self.board.devices
 
 class Board(Arduino):
     
@@ -129,8 +132,8 @@ class WritablePin(Pin):
         self.pin_type = "Writable Pin"
     
     def write(self, value):
-    
-        self.record(value)
+        if not self.pin.read() == value:
+            self.record(value)
         self.pin.write(value)
          
         

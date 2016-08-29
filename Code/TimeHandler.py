@@ -7,6 +7,19 @@ Created on Sat Aug  6 00:06:27 2016
 
 import time
 
+class Method():
+    def __init__(self, method):
+        self.method = method
+        
+        self.call_completed = False
+        
+        def method(self):
+    
+            if not self.call_completed:
+                self.method()
+                self.call_completed = True
+            
+
 class DelayedMethod():
     def __init__(self, method, delay_time):
         
@@ -16,7 +29,7 @@ class DelayedMethod():
         self.call_time = time.time()
         self.call_completed = False
         
-    def delayed_method(self):
+    def method(self):
         
         if time.time() - self.call_time >= self.delay_time and not self.call_completed:
             
@@ -39,7 +52,7 @@ class TimedMethod():
         
         self.on_method()
         
-    def timed_method(self):
+    def method(self):
         
         if time.time() - self.call_time >= self.on_duration and not self.call_completed:
             
@@ -63,7 +76,7 @@ class TimedDelayedMethod():
         self.call_started = False
         self.call_ended = False
         
-    def timed_delayed_method(self):
+    def method(self):
         
         if time.time() - self.call_time >= self.delay_time and not self.call_started:
             self.on_method()
