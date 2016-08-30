@@ -12,8 +12,13 @@ class Method():
         self.method = method
         
         self.call_completed = False
+        self.time_stamped = False
         
         def method(self):
+            
+            if not self.time_stamped:
+                self.call_time = time.time()
+                self.time_stamped = True
     
             if not self.call_completed:
                 self.method()
@@ -26,10 +31,14 @@ class DelayedMethod():
         self.method = method
         self.delay_time = delay_time
         
-        self.call_time = time.time()
+        self.time_stamped = False
         self.call_completed = False
         
     def method(self):
+        
+        if not self.time_stamped:
+            self.call_time = time.time()
+            self.time_stamped = True
         
         if time.time() - self.call_time >= self.delay_time and not self.call_completed:
             
@@ -47,15 +56,19 @@ class TimedMethod():
         self.on_duration = on_duration
         self.off_method = off_method
         
-        self.call_time = time.time()
+        self.time_stamped = False
         self.call_completed = False
         
         self.on_method()
         
     def method(self):
         
+        if not self.time_stamped:
+            self.call_time = time.time()
+            self.time_stamped = True
+        
         if time.time() - self.call_time >= self.on_duration and not self.call_completed:
-            
+            print "called"
             self.off_method()
             self.call_completed = True
             return self.call_completed
@@ -72,11 +85,15 @@ class TimedDelayedMethod():
         self.on_duration = on_duration
         self.off_method = off_method
         
-        self.call_time = time.time()
         self.call_started = False
         self.call_ended = False
+        self.time_stamped = False
         
     def method(self):
+        
+        if not self.time_stamped:
+            self.call_time = time.time()
+            self.time_stamped = True
         
         if time.time() - self.call_time >= self.delay_time and not self.call_started:
             self.on_method()

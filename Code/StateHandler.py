@@ -30,7 +30,9 @@ class StateHandler():
                 self.next()
             
     def next(self):
+        self.current_state.time_stamped = False
         self.current_state = self.states[self.current_state.information[2]]
+        print self.current_state.information[0]
         
         
         
@@ -50,19 +52,17 @@ class State():
                 if procedure[0] == self.devices[device].device_name:
                     print devices[device].type
                     if procedure[1] == None and procedure[3] == None:
-                        self.methods.append(lambda: self.devices["Chamber Light"].write(procedure[2]))
-                        self.procedures.append(Method(self.methods[len(self.methods)-1]))
-#                    elif procedure[1] == None and procedure[3] != None:
-#                        on_method = lambda: self.devices[device].write(procedure[2])
-#                        off_method = lambda: self.devices[device].write(procedure[4])
-#                        self.procedures.append(TimedMethod(lambda: on_method, procedure[3], off_method))
-#                    elif procedure[1] != None and procedure[3] == None:
-#                        method = lambda: self.devices[device].write(procedure[2])
-#                        self.procedures.append(DelayedMethod(method, procedure[1]))
-#                    elif procedure[1] != None and procedure[3] != None:
-#                        on_method = lambda: self.devices[device].write(procedure[2])
-#                        off_method = lambda: device.write(procedure[4])
-#                        self.procedures.append(TimedDelayedMethod(procedure[1], on_method, procedure[3], off_method))
+                        self.methods.append(self.devices[device].write)
+                        self.procedures.append(Method(lambda: self.methods[len(self.methods)-1](procedure[2])))
+                    elif procedure[1] == None and procedure[3] != None:                        
+                        self.methods.append(self.devices[device].write)
+                        self.procedures.append(TimedMethod(lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[3], lambda: self.methods[len(self.methods)-1](procedure[4])))
+                    elif procedure[1] != None and procedure[3] == None:
+                        self.methods.append(self.devices[device].write)
+                        self.procedures.append(DelayedMethod(lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[1]))
+                    elif procedure[1] != None and procedure[3] != None:
+                        self.methods.append(self.devices[device].write)
+                        self.procedures.append(TimedDelayedMethod(procedure[1], lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[3], lambda: self.methods[len(self.methods)-1](procedure[4])))
     def run(self):
         for procedure in self.procedures:
             procedure.method()
@@ -71,9 +71,36 @@ class State():
         
         if not self.time_stamped:
             self.start_time = time.time()
+            self.time_stamped = True
             
         if type(self.information[1]) == float:
             if time.time() - self.start_time >= self.information[1]:
+                for procedure in self.procedures:
+                    try:
+                        procedure.call_completed = False
+                    except:
+                        pass
+                    try:
+                        procedure.call_completed = False
+                    except:
+                        pass
+                    try:
+                        procedure.time_stamped = False
+                    except:
+                        pass
+                    try:
+                        procedure.call_time = 2*time.time()
+                    except:
+                        pass
+                    try:
+                        procedure.call_started = False
+                    except:
+                        pass
+                    try:
+                        procedure.call_ended = False
+                    except:
+                        pass
+                        
                 return True
         
         elif type(self.information[1]) == str:

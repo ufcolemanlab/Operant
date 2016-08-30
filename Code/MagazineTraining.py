@@ -9,7 +9,7 @@ from BoardHandler import BoardHandler
 from StateHandler import StateHandler
 
 cue_time = 1.0
-reward_time = 0.025
+reward_time = .025
 
 board_configuration = [
     [2, "Servo", "Infrared Beam 1"],
@@ -23,13 +23,13 @@ board_configuration = [
                         ]
                         
 trial_states = [
-["Resting State", 20.0, "Reward State", 
+["Resting State", 2.0, "Reward State", 
      [
          ["Chamber Light", None, 1.0, None, None],
      ]
 ],
 ["Reward State", 2.0, "Resting State", 
-     [
+     [   ["Chamber Light", None, 0.0, None, None],
          ["Solenoid 1", None, 1.0, reward_time, 0.0],
          ["Cue Light", None, 1.0, cue_time, 0.0],
      ]
