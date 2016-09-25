@@ -31,6 +31,7 @@ class TrialHandler():
             
             self.current_state.run()
             if self.current_state.check_next():
+                self.current_state.check_next()
                 self.next()
         
     def next(self):
@@ -73,9 +74,11 @@ class State():
         elif type(self.state_information[1]) == float and type(self.state_information[2]) == float:
             if not self.random_time_generated:
                 self.time_range = random.uniform(0, self.state_information[2])
+                self.random_time_generated = True
             if time.time() - self.start_time >= self.state_information[1] + self.time_range:
                 for procedure in self.procedures:
                     procedure.reset_variables()
+                self.random_time_generated = False
                 return True
                 
         return False

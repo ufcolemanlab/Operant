@@ -5,8 +5,8 @@ Created on Sun Aug 28 17:40:07 2016
 @author: isaiahnields
 """
 
-from BoardHandler2 import Board
-from StateHandler2 import TrialHandler
+from BoardHandler import Board
+from StateHandler import TrialHandler
 
 cue_time = 1.0
 reward_time = .025
@@ -14,7 +14,7 @@ reward_time = .025
 board_information = [
 
 ['d' , 1, 'o', None, None],
-['d' , 2, 'o', None, None],
+['d' , 2, 's', 'Servo', 'Servo 1'],
 ['d' , 3, 'o', None, None],
 ['d' , 4, 'o', None, None],
 ['d' , 5, 'o', None, None],
@@ -29,21 +29,21 @@ board_information = [
 ]
                         
 trial_states = [
-["Resting State", 2.0, 3.0, "Reward State", 
+["Resting State", 2.0, 9.0, "Reward State", 
      [
-         [12, "Chamber Light", None, 1.0, None, None]
+         [12, "Chamber Light", None, 1.0, None, None],
+         [7, "Cue Light", None, 0.0, None, None],
+
      ]
 ],
-["Reward State", 2.0, None, "Resting State", 
+["Reward State", 1.0, None, "Resting State", 
      [   [12, "Chamber Light", None, 1.0, None, None],
 #         ["Solenoid 1", None, 1.0, reward_time, 0.0],
-         [7, "Cue Light", None, 1.0, cue_time, 0.0]
+         [7, "Cue Light", None, 1.0, cue_time, 0.0],
+         [2, "Servo 1", None, 170.0, 1.0, 2.0]
      ]
 ]
            ]
-           
-
-import TimeHandler
 
                 
 board = Board(board_information=board_information)
