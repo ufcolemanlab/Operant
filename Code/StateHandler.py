@@ -5,67 +5,59 @@ Created on Fri Aug  5 10:25:15 2016
 @author: isaiahnields
 """
 
-from TimeHandler import Method, DelayedMethod, TimedMethod, TimedDelayedMethod
+import TimeHandler
 import time
+import random
 
 
-class StateHandler():
-    def __init__(self, state_information, devices):
-        self.state_information = state_information
-        self.devices = devices
+
+class TrialHandler():
+    def __init__(self, trial_information=list, devices=list):
+        
+        self.trial_information = trial_information
+        
         
         self.states = {}
         
-        for information in self.state_information:
-            self.states[information[0]] = State(information, self.devices)
+        for state_information in self.trial_information:
+            self.states[state_information[0]] = State(state_information, devices)
+            
     def start(self):
         
         self.current_state = self.states[self.states.keys()[0]]
-        print self.current_state.information[0]
+        print self.current_state.state_information[0]
         
         while True:
             
             self.current_state.run()
             if self.current_state.check_next():
                 self.next()
-            
+        
     def next(self):
         self.current_state.time_stamped = False
-        self.current_state = self.states[self.current_state.information[2]]
-        print self.current_state.information[0]
-        
-        
+        self.current_state = self.states[self.current_state.state_information[3]]
+        print self.current_state.state_information[0]
         
         
 
 class State():
-    def __init__(self, information, devices, *args, **kwargs):
-        self.information = information
-        self.devices = devices
+    def __init__(self, state_information, devices):
+
+        self.state_information = state_information
+        
+        self.procedures = []
         
         self.time_stamped = False
-        self.procedures = []
-        self.methods = []
-        
-        for procedure in self.information[3]:
-            for device in self.devices:
-                if procedure[0] == self.devices[device].device_name:
-                    print devices[device].type
-                    if procedure[1] == None and procedure[3] == None:
-                        self.methods.append(self.devices[device].write)
-                        self.procedures.append(Method(lambda: self.methods[len(self.methods)-1](procedure[2])))
-                    elif procedure[1] == None and procedure[3] != None:                        
-                        self.methods.append(self.devices[device].write)
-                        self.procedures.append(TimedMethod(lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[3], lambda: self.methods[len(self.methods)-1](procedure[4])))
-                    elif procedure[1] != None and procedure[3] == None:
-                        self.methods.append(self.devices[device].write)
-                        self.procedures.append(DelayedMethod(lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[1]))
-                    elif procedure[1] != None and procedure[3] != None:
-                        self.methods.append(self.devices[device].write)
-                        self.procedures.append(TimedDelayedMethod(procedure[1], lambda: self.methods[len(self.methods)-1](procedure[2]), procedure[3], lambda: self.methods[len(self.methods)-1](procedure[4])))
+        self.random_time_generated = False
+        for procedure in self.state_information[4]:
+            for device in devices:
+                if device != None:
+                    if int(procedure[0]) == int(device.pin_number):
+                        self.procedures.append(TimeHandler.package_method(method=device.write, delay_time=procedure[2], on_value=procedure[3], on_duration=procedure[4], off_value=procedure[5]))
+                        
     def run(self):
         for procedure in self.procedures:
-            procedure.method()
+            procedure.packaged_method()
             
     def check_next(self):
         
@@ -73,37 +65,18 @@ class State():
             self.start_time = time.time()
             self.time_stamped = True
             
-        if type(self.information[1]) == float:
-            if time.time() - self.start_time >= self.information[1]:
+        if type(self.state_information[1]) == float and self.state_information[2] == None:
+            if time.time() - self.start_time >= self.state_information[1]:
                 for procedure in self.procedures:
-                    try:
-                        procedure.call_completed = False
-                    except:
-                        pass
-                    try:
-                        procedure.call_completed = False
-                    except:
-                        pass
-                    try:
-                        procedure.time_stamped = False
-                    except:
-                        pass
-                    try:
-                        procedure.call_time = 2*time.time()
-                    except:
-                        pass
-                    try:
-                        procedure.call_started = False
-                    except:
-                        pass
-                    try:
-                        procedure.call_ended = False
-                    except:
-                        pass
-                        
+                    procedure.reset_variables()
                 return True
-        
-        elif type(self.information[1]) == str:
-            pass
-        
+        elif type(self.state_information[1]) == float and type(self.state_information[2]) == float:
+            if not self.random_time_generated:
+                self.time_range = random.uniform(0, self.state_information[2])
+            if time.time() - self.start_time >= self.state_information[1] + self.time_range:
+                for procedure in self.procedures:
+                    procedure.reset_variables()
+                return True
+                
         return False
+            

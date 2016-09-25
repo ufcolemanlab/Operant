@@ -5,41 +5,50 @@ Created on Sun Aug 28 17:40:07 2016
 @author: isaiahnields
 """
 
-from BoardHandler import BoardHandler
-from StateHandler import StateHandler
+from BoardHandler2 import Board
+from StateHandler2 import TrialHandler
 
 cue_time = 1.0
 reward_time = .025
 
-board_configuration = [
-    [2, "Servo", "Infrared Beam 1"],
-    [3, "Solenoid", "Solenoid 1"],
-    [5, "Light", "Nosepoke Light"],
-    [6, "Servo", "Servo 1"], 
-    [7, "Light", "Cue Light"],
-    [8, "Lever", "Lever 1"],
-    [9, "Servo", "Servo 2"],
-    [12, "Light", "Chamber Light"]
-                        ]
+board_information = [
+
+['d' , 1, 'o', None, None],
+['d' , 2, 'o', None, None],
+['d' , 3, 'o', None, None],
+['d' , 4, 'o', None, None],
+['d' , 5, 'o', None, None],
+['d' , 6, 'o', None, None],
+['d' , 7, 'o', 'Light', 'Cue Light'],
+['d' , 8, 'o', None, None],
+['d' , 9, 'o', None, None],
+['d' , 10, 'o', None, None],
+['d' , 11, 'o', None, None],
+['d' , 12, 'o', 'Light', 'Chamber Light']
+
+]
                         
 trial_states = [
-["Resting State", 2.0, "Reward State", 
+["Resting State", 2.0, 3.0, "Reward State", 
      [
-         ["Chamber Light", None, 1.0, None, None],
+         [12, "Chamber Light", None, 1.0, None, None]
      ]
 ],
-["Reward State", 2.0, "Resting State", 
-     [   ["Chamber Light", None, 0.0, None, None],
-         ["Solenoid 1", None, 1.0, reward_time, 0.0],
-         ["Cue Light", None, 1.0, cue_time, 0.0],
+["Reward State", 2.0, None, "Resting State", 
+     [   [12, "Chamber Light", None, 1.0, None, None],
+#         ["Solenoid 1", None, 1.0, reward_time, 0.0],
+         [7, "Cue Light", None, 1.0, cue_time, 0.0]
      ]
 ]
            ]
            
 
-board_handler = BoardHandler(device_list=board_configuration)
+import TimeHandler
 
-board_handler.boot()
+                
+board = Board(board_information=board_information)
+board.boot_board()
+board.boot_pins()
 
-magazine_traing = StateHandler(state_information=trial_states, devices=board_handler.devices())
+magazine_traing = TrialHandler(trial_information=trial_states, devices=board.pins)
 magazine_traing.start()
