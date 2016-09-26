@@ -13,6 +13,7 @@ reward_time = .025
 
 board_information = [
 
+  # JEC: need to add 'nosepoke" detection
 ['d' , 1, 'o', None, None],
 ['d' , 2, 's', 'Servo', 'Servo 1'],
 ['d' , 3, 'o', None, None],
@@ -27,7 +28,7 @@ board_information = [
 ['d' , 12, 'o', 'Light', 'Chamber Light']
 
 ]
-                        
+# output CSV with event timestamps (including nosepoke entry/exit)                        
 trial_states = [
 ["Resting State", 2.0, 9.0, "Reward State", 
      [
