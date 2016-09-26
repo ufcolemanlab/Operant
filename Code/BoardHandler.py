@@ -27,6 +27,13 @@ class Board(Arduino):
         for port in self.ports:
             if "Arduino" in port[1] or "Generic" in port[1]:
                 self.aruindo_port = port[0]
+                print(port[0])
+            elif "/dev/cu.usbserial-A603OPBJ" in port[0]:
+                print(port[0])
+                self.aruindo_port = port[0]
+            else:
+                print(port)
+                print(port[0])
             
         Arduino.__init__(self, self.aruindo_port)
         it = util.Iterator(self)
